@@ -1,0 +1,26 @@
+commands:
+  find_files: &cmd_find_files >-
+    find . -mindepth 1
+    -not \( -path './.git/*' -or -path './node_modules/*' \)
+    -and -type f
+
+options:
+  default: &opts_default
+    exact: false
+    extended: true
+    multi: false
+    reverse: true
+
+  preview: &opts_preview
+    <<: *opts_default
+    multi: true
+    preview-window: 60%,right,wrap
+    preview:
+      - 'cat -n {1} 2>/dev/null'
+      - '|| tree -aCFL 1 {1} 2>/dev/null'
+    prompt: 'view: '
+
+profiles:
+  view_files:
+    command: *cmd_find_files
+    options: *opts_preview
