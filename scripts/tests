@@ -1,0 +1,95 @@
+#!/bin/bash
+
+printf '\e[34mTesting missing keys with error messages\e[0m\n'
+
+printf '\e[90m$ fzg -c missing_command -o missing_options\e[0m\n'
+fzg -c missing_command -o missing_options
+
+printf '\e[90m$ fzg -c missing_command\e[0m\n'
+fzg -c missing_command
+
+printf '\e[90m$ fzg -o missing_options\e[0m\n'
+fzg -o missing_options
+
+printf '\e[90m$ fzg -p missing_profile\e[0m\n'
+fzg -p missing_profile
+
+# ----------------------------------------------------------------------------
+
+printf '\e[34mTesting missing keys without error messages\e[0m\n'
+
+printf '\e[90m$ fzg -q -c missing_command -o missing_options\e[0m\n'
+fzg -q -c missing_command -o missing_options
+
+printf '\e[90m$ fzg -q -c missing_command\e[0m\n'
+fzg -q -c missing_command
+
+printf '\e[90m$ fzg -q -o missing_options\e[0m\n'
+fzg -q -o missing_options
+
+printf '\e[90m$ fzg -q -p missing_profile\e[0m\n'
+fzg -q -p missing_profile
+
+# ----------------------------------------------------------------------------
+
+printf '\e[34mTesting invalid configuration with error messages\e[0m\n'
+
+printf '\e[90m$ fzg -c invalid_command -o invalid_options\e[0m\n'
+fzg -c invalid_command -o invalid_options
+
+printf '\e[90m$ fzg -c invalid_command\e[0m\n'
+fzg -c invalid_command
+
+printf '\e[90m$ fzg -o invalid_options\e[0m\n'
+fzg -o invalid_options
+
+printf '\e[90m$ fzg -p invalid_profile\e[0m\n'
+fzg -p invalid_profile
+
+# ----------------------------------------------------------------------------
+
+printf '\e[34mTesting invalid configuration without error messages\e[0m\n'
+
+printf '\e[90m$ fzg -q -c invalid_command -o invalid_options\e[0m\n'
+fzg -q -c invalid_command -o invalid_options
+
+printf '\e[90m$ fzg -q -c invalid_command\e[0m\n'
+fzg -q -c invalid_command
+
+printf '\e[90m$ fzg -q -o invalid_options\e[0m\n'
+fzg -q -o invalid_options
+
+printf '\e[90m$ fzg -q -p invalid_profile\e[0m\n'
+fzg -q -p invalid_profile
+
+# ----------------------------------------------------------------------------
+
+printf '\e[34mTesting existing keys with raw format\e[0m\n'
+
+printf '\e[90m$ fzg -r -c find_files -o preview\e[0m\n'
+fzg -r -c find_files -o preview
+
+printf '\e[90m$ fzg -r -c find_files\e[0m\n'
+fzg -r -c find_files
+
+printf '\e[90m$ fzg -r -o preview\e[0m\n'
+fzg -r -o preview
+
+printf '\e[90m$ fzg -r -p view_files\e[0m\n'
+fzg -r -p view_files
+
+# ----------------------------------------------------------------------------
+
+printf '\e[34mTesting existing keys without raw format\e[0m\n'
+
+printf '\e[90m$ fzg -c find_files -o preview\e[0m\n'
+fzg -c find_files -o preview
+
+printf '\e[90m$ fzg -c find_files\e[0m\n'
+fzg -c find_files
+
+printf '\e[90m$ fzg -o preview\e[0m\n'
+fzg -o preview
+
+printf '\e[90m$ fzg -p view_files\e[0m\n'
+fzg -p view_files

@@ -1,10 +1,14 @@
 commands:
+  invalid_command: null
+
   find_files: &cmd_find_files >-
     find . -mindepth 1
     -not \( -path './.git/*' -or -path './node_modules/*' \)
     -and -type f
 
 options:
+  invalid_options: null
+
   default: &opts_default
     exact: false
     extended: true
@@ -21,6 +25,8 @@ options:
     prompt: 'view: '
 
 profiles:
+  invalid_profile: null
+
   view_files:
     command: *cmd_find_files
     options: *opts_preview

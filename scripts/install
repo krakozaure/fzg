@@ -9,5 +9,4 @@ mkdir -pv -- "$HOME/.local/bin"
 cp -av -- "./dist/fzg" "$HOME/.local/bin/fzg"
 
 mkdir -pv -- "$HOME/.config/fzg"
-cp -av -- ./configs/fzg.yaml "$HOME/.config/fzg"
-cp -av -- ./shell/completions.bash "$HOME/.config/fzg"
+cp -av -- "./configs"/* "$HOME/.config/fzg"

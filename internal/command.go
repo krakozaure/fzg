@@ -9,6 +9,9 @@ import (
 type Command interface{}
 
 func parseCommand(commandConf Command) string {
+	if commandConf == nil {
+		return ""
+	}
 	command := ""
 	switch commandConf.(type) {
 	case []interface{}:

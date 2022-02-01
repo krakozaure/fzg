@@ -9,7 +9,10 @@ import (
 
 type Options map[string]interface{}
 
-func parseOptions(optionsConf Options) []string {
+func parseOptions(optionsConf Options) string {
+	if optionsConf == nil {
+		return ""
+	}
 	options := []string{}
 	for name, ivalue := range optionsConf {
 		switch ivalue.(type) {
@@ -26,7 +29,7 @@ func parseOptions(optionsConf Options) []string {
 		}
 	}
 	sort.Strings(options)
-	return options
+	return strings.Join(options, " ")
 }
 
 func optionFromMap(name string, ivalue interface{}) string {

@@ -41,6 +41,28 @@ func LoadConfig() (Config, error) {
 	return conf, err
 }
 
+func ParseConfig(commandConf Command, optionsConf Options) string {
+	command := parseCommand(commandConf)
+	options := parseOptions(optionsConf)
+	output := ""
+	if !RawFlag {
+		if command != "" {
+			output += fmt.Sprintf("export %s=%q\n", "FZF_DEFAULT_COMMAND", command)
+		}
+		if options != "" {
+			output += fmt.Sprintf("export %s=%q\n", "FZF_DEFAULT_OPTS", options)
+		}
+	} else {
+		if command != "" {
+			output += fmt.Sprintf("%s\n", command)
+		}
+		if options != "" {
+			output += fmt.Sprintf("%s\n", options)
+		}
+	}
+	return output
+}
+
 func configFile() (string, error) {
 	var confFile string
 
