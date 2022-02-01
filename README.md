@@ -2,7 +2,7 @@
 
 fzg is mainly a CLI tool to use [fzf (made by junegunn)](https://github.com/junegunn/fzf) with a configuration file.
 
-fzg <strike>is</strike> will also contains a collection of some shell goodies that I use everyday in my terminal.
+fzg will also contains a collection of some shell goodies that I use everyday in my terminal.
 
 ## Project status
 
@@ -19,24 +19,24 @@ After I wrote a bunch of utilities and ad-hoc command lines, I had some issues.
 fzf is very customizable and comes with a lot of useful options, but my
 utilities ended up with very long lines that made them less readable.
 
-I had a syntax errors because of missing one `,` as separator or the `:`.
+I had syntax errors because of missing one `,` as separator or the `:`.
 
 **Solution 1**
 
-The configuration format must flexible enough to allow both horizontal and vertical structure.
+The configuration format must be flexible enough to allow both horizontal and vertical structure.
 
 fzg use the YAML format which can allow easier reading with vertical structure.
 
 Instead of one long value seperated by a `,`, the value can also be written
-as a YAML sequence or mapping, then fzg will join using the appropriate separator for the option.
+as a YAML sequence or mapping, then fzg will use the appropriate separators for the options.
 
 **Issue 2 : outdated state**
 
 I reuse a lot of common commands and options between my shell utilities, but when I want
-to edit one command or option in a file, I often forget to do the update for all utilities.
+to edit one command or an option in a file, I often forget to do the update for all utilities.
 
 Also, I sometime need to edit functions, but every functions update involve
-sourcing the file containing those functions.
+sourcing the files containing those functions.
 
 **Solution 2**
 
@@ -46,9 +46,9 @@ multiple files just for one modification.
 fzg use the YAML format which also avoid configuration duplication
 and allow reusability with merging, anchors and aliases features.
 
-To avoid outdated state, the configuration can be sourced easily in scripts or functions.
+To avoid outdated state, the configuration can be sourced easily in functions or scripts.
 
-This way, when an option is modified, each code that use the same group of options will have the update.
+This way, when options are modified, each code that use the same group of options will have the update.
 
 **Issue 3 : human memory**
 
@@ -62,7 +62,7 @@ The commands or options must be organised and retrieved by only using a configur
 fzg default configuration is splitted in 3 sections : `commands`, `options` and `profiles`.
 
 `commands` and `options` sections contain subkeys that are used to identify
-commands or group of options.
+commands and group of options.
 
 The `profiles` section is used to combine command and options as one group.
 
@@ -78,20 +78,24 @@ They are not criticisms of fzf !
 The fzg CLI tool does only two things :
 
 1) it parses the required configuration and turn it into a string ;
-2) it formats the string to be sourceable (without the `-r` flag)
-   or assigned to variables (with the `-r` flag).
+2) it formats the string to be sourceable/exportable (without the `-r` flag)
+   or assigned to variables as a raw value (with the `-r` flag).
 
 
 Configuration example : `./configs/fzg.yaml`
 
 ```yaml
 commands:
+  invalid_command: null
+
   find_files: &cmd_find_files >-
     find . -mindepth 1
     -not \( -path './.git/*' -or -path './node_modules/*' \)
     -and -type f
 
 options:
+  invalid_options: null
+
   default: &opts_default
     exact: false
     extended: true
@@ -108,12 +112,15 @@ options:
     prompt: 'view: '
 
 profiles:
+  invalid_profile: null
+
   view_files:
     command: *cmd_find_files
     options: *opts_preview
 ```
 
 With the configuration above, here are some usages of fzg.
+To find other usages, check `./scripts/tests`.
 
 ```sh
 # print the command assigned to 'find_files'
