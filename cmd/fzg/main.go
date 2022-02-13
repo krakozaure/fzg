@@ -19,28 +19,40 @@ func main() {
 		os.Exit(1)
 	}
 
-	conf, text := "", ""
+	err_text, out_text := "", ""
 	if fzg.CommandFlag != "" && fzg.OptionsFlag != "" {
-		conf = fmt.Sprintf("command '%s' or options '%s'", fzg.CommandFlag, fzg.OptionsFlag)
-		text = fzg.ParseConfig(
+		err_text = fmt.Sprintf(
+			"Invalid or missing configuration for '%s' or '%s'",
+			fzg.CommandFlag, fzg.OptionsFlag,
+		)
+		out_text = fzg.ParseConfig(
 			config.Commands[fzg.CommandFlag],
 			config.Options[fzg.OptionsFlag],
 		)
 	} else if fzg.CommandFlag != "" {
-		conf = fmt.Sprintf("command '%s'", fzg.CommandFlag)
-		text = fzg.ParseConfig(
+		err_text = fmt.Sprintf(
+			"Invalid or missing command configuration for '%s'",
+			fzg.CommandFlag,
+		)
+		out_text = fzg.ParseConfig(
 			config.Commands[fzg.CommandFlag],
 			nil,
 		)
 	} else if fzg.OptionsFlag != "" {
-		conf = fmt.Sprintf("options '%s'", fzg.OptionsFlag)
-		text = fzg.ParseConfig(
+		err_text = fmt.Sprintf(
+			"Invalid or missing options configuration for '%s'",
+			fzg.OptionsFlag,
+		)
+		out_text = fzg.ParseConfig(
 			nil,
 			config.Options[fzg.OptionsFlag],
 		)
 	} else if fzg.ProfileFlag != "" {
-		conf = fmt.Sprintf("profile '%s'", fzg.ProfileFlag)
-		text = fzg.ParseConfig(
+		err_text = fmt.Sprintf(
+			"Invalid or missing profile configuration for '%s'",
+			fzg.ProfileFlag,
+		)
+		out_text = fzg.ParseConfig(
 			config.Profiles[fzg.ProfileFlag].Command,
 			config.Profiles[fzg.ProfileFlag].Options,
 		)
@@ -49,11 +61,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if text == "" {
+	if out_text == "" {
 		if !fzg.QuietFlag {
-			fmt.Fprintf(os.Stderr, "Missing or invalid configuration %s\n", conf)
+			fmt.Fprintf(os.Stderr, "%s\n", err_text)
 		}
 		os.Exit(1)
 	}
-	fmt.Print(text)
+	fmt.Print(out_text)
 }

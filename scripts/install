@@ -4,9 +4,7 @@ set -e
 
 go mod tidy
 go build -ldflags='-s -w' -o "./dist/fzg" -- "./cmd/fzg/main.go"
-
-mkdir -pv -- "$HOME/.local/bin"
-cp -av -- "./dist/fzg" "$HOME/.local/bin/fzg"
+[ -d "$HOME/.local/bin" ] && mv -v -- "./dist/fzg" "$HOME/.local/bin/fzg"
 
 mkdir -pv -- "$HOME/.config/fzg"
 cp -av -- "./configs"/* "$HOME/.config/fzg"

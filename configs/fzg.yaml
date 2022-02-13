@@ -1,32 +1,147 @@
-commands:
-  invalid_command: null
+bindings:
+  jump: &binds_jump
+    alt-g: jump
+    alt-j: jump-accept
 
-  find_files: &cmd_find_files >-
-    find . -mindepth 1
-    -not \( -path './.git/*' -or -path './node_modules/*' \)
-    -and -type f
+  move: &binds_move
+    ",": down
+    ";": up
+    "alt-,": last
+    "alt-;": first
+
+  scroll: &binds_scroll
+    alt-d: preview-half-page-down
+    alt-u: preview-half-page-up
+    alt-e: preview-down
+    alt-y: preview-up
+
+  select: &binds_select
+    alt-a: select-all
+    alt-A: deselect-all
+
+  toggle: &binds_toggle
+    ctrl-alt-a: toggle-all
+    ctrl-alt-p: toggle-preview
+    ctrl-alt-s: toggle-sort
+
+  all: &binds_all
+    <<: *binds_jump
+    <<: *binds_move
+    <<: *binds_scroll
+    <<: *binds_select
+    <<: *binds_toggle
+
+# -------------------------------------------------------
+
+commands:
+  fd: &cmd_fd [fd, --color=always, --hidden]
+  fd_dirs: &cmd_fd_dirs [*cmd_fd, --type=d]
+  fd_files: &cmd_fd_files [*cmd_fd, --type=f]
+
+  rg:
+    &cmd_rg [
+      rg,
+      --color=always,
+      --column,
+      --hidden,
+      --line-number,
+      --no-heading,
+      --no-ignore,
+      --smart-case,
+      --glob=!.git,
+      --glob=!node_modules,
+    ]
+
+previews:
+  bat: &pview_bat bat --color=always --style=changes,header,numbers,rule,snip
+  tree: &pview_tree tree -aCFL 1
+
+# -------------------------------------------------------
 
 options:
-  invalid_options: null
-
   default: &opts_default
+    ansi: true
+    bind:
+      <<: *binds_all
+    border: none
+    color:
+      - 16,bg+:-1,fg+:cyan,border:black,info:bright-black
+      - hl:bright-yellow,hl+:bright-yellow
+      - header:bright-blue,prompt:bright-blue,spinner:bright-magenta
+      - marker:bright-green,pointer:bright-cyan
     exact: false
     extended: true
+    header-first: true
+    marker: "✓ "
     multi: false
+    pointer: "⮞ "
+    prompt: "fzg: "
     reverse: true
+    select-1: true
+
+  select_one: &opts_select_one
+    <<: *opts_default
+    exact: true
+    multi: false
+
+  select_multi: &opts_select_multi
+    <<: *opts_default
+    exact: false
+    multi: true
 
   preview: &opts_preview
-    <<: *opts_default
-    multi: true
-    preview-window: 60%,right,wrap
+    <<: *opts_select_multi
+    preview-window: 66%,right,border-left
     preview:
-      - 'cat -n {1} 2>/dev/null'
-      - '|| tree -aCFL 1 {1} 2>/dev/null'
-    prompt: 'view: '
+      [
+        "(",
+        *pview_bat,
+        "-- {} ||",
+        *pview_tree,
+        "-- {} ||",
+        "file -- {}",
+        ") 2> /dev/null",
+      ]
+
+  grep: &opts_grep
+    <<: *opts_select_multi
+    preview-window: up,66%,border-bottom,+{2}+3/3,~1
+    preview: [*pview_bat, "--highlight-line {2} -- {1}"]
+    sort: false
+
+  vimgrep: &opts_vimgrep
+    <<: *opts_grep
+    delimiter: ":"
+    nth: -1
+
+# -------------------------------------------------------
 
 profiles:
-  invalid_profile: null
+  select_paths:
+    command: [*cmd_fd, "--max-depth=1"]
+    options:
+      <<: *opts_select_multi
+
+  select_paths_recursive:
+    command: *cmd_fd
+    options:
+      <<: *opts_select_multi
 
   view_files:
-    command: *cmd_find_files
+    command: *cmd_fd_files
     options: *opts_preview
+
+  filter_lines_regex:
+    command: *cmd_rg
+    options:
+      <<: *opts_vimgrep
+      bind:
+        <<: *binds_all
+        change: reload( sleep 0.05; $FZF_DEFAULT_COMMAND {q} || true )
+      disabled: true
+
+  filter_lines_fuzzy:
+    command: *cmd_rg
+    options:
+      <<: *opts_vimgrep
+      exact: true

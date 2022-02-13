@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -46,18 +47,25 @@ func ParseConfig(commandConf Command, optionsConf Options) string {
 	options := parseOptions(optionsConf)
 	output := ""
 	if !RawFlag {
-		if command != "" {
-			output += fmt.Sprintf("export %s=%q\n", "FZF_DEFAULT_COMMAND", command)
+		if len(command) > 0 {
+			output += fmt.Sprintf(
+				"export %s=%q\n", "FZF_DEFAULT_COMMAND", strings.Join(command, " "),
+			)
 		}
-		if options != "" {
-			output += fmt.Sprintf("export %s=%q\n", "FZF_DEFAULT_OPTS", options)
+		if len(options) > 0 {
+			output += fmt.Sprintf(
+				"export %s=%q\n", "FZF_DEFAULT_OPTS", strings.Join(options, " "),
+			)
 		}
 	} else {
-		if command != "" {
-			output += fmt.Sprintf("%s\n", command)
+		if len(command) > 0 {
+			output += fmt.Sprintf("%s\n", strings.Join(command, "\n"))
 		}
-		if options != "" {
-			output += fmt.Sprintf("%s\n", options)
+		if len(options) > 0 {
+			if len(command) > 0 {
+				output += "\x1E"
+			}
+			output += fmt.Sprintf("%s\n", strings.Join(options, "\n"))
 		}
 	}
 	return output
@@ -66,7 +74,7 @@ func ParseConfig(commandConf Command, optionsConf Options) string {
 func configFile() (string, error) {
 	var confFile string
 
-	envConfigFile := os.Getenv("FZG_CONFIG_FILE")
+	envConfigFile := os.Getenv("FZG_CONF")
 	xdgConfigFile := os.ExpandEnv(CONFIG_FILE_PATH)
 
 	if envConfigFile != "" && isFile(envConfigFile) {

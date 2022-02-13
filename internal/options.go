@@ -9,9 +9,9 @@ import (
 
 type Options map[string]interface{}
 
-func parseOptions(optionsConf Options) string {
+func parseOptions(optionsConf Options) []string {
 	if optionsConf == nil {
-		return ""
+		return []string{}
 	}
 	options := []string{}
 	for name, ivalue := range optionsConf {
@@ -29,7 +29,7 @@ func parseOptions(optionsConf Options) string {
 		}
 	}
 	sort.Strings(options)
-	return strings.Join(options, " ")
+	return options
 }
 
 func optionFromMap(name string, ivalue interface{}) string {
@@ -45,7 +45,14 @@ func optionFromSlice(name string, ivalue interface{}) string {
 	strSlice := []string{}
 	v := reflect.ValueOf(ivalue)
 	for i := 0; i < v.Len(); i++ {
-		strSlice = append(strSlice, fmt.Sprint(v.Index(i)))
+		switch ivalue := v.Index(i).Interface().(type) {
+		case []interface{}:
+			for _, element := range ivalue {
+				strSlice = append(strSlice, element.(string))
+			}
+		case string:
+			strSlice = append(strSlice, fmt.Sprint(v.Index(i)))
+		}
 	}
 
 	if name == "preview" {
@@ -71,8 +78,8 @@ func optionFromString(name string, ivalue interface{}) string {
 }
 
 func quotedOption(key string, ivalue interface{}) string {
-	if strings.Contains(ivalue.(string), " ") {
-		return fmt.Sprintf("--%s=%q", key, ivalue)
+	if !RawFlag && (key == "bind" || strings.Contains(ivalue.(string), " ")) {
+		return fmt.Sprintf("--%s='%s'", key, ivalue)
 	} else {
 		return fmt.Sprintf("--%s=%s", key, ivalue)
 	}

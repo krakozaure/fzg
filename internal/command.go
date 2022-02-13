@@ -3,16 +3,15 @@ package fzg
 import (
 	"fmt"
 	"reflect"
-	"strings"
 )
 
 type Command interface{}
 
-func parseCommand(commandConf Command) string {
+func parseCommand(commandConf Command) []string {
 	if commandConf == nil {
-		return ""
+		return []string{}
 	}
-	command := ""
+	command := []string{}
 	switch commandConf.(type) {
 	case []interface{}:
 		return commandFromSequence(commandConf)
@@ -23,15 +22,22 @@ func parseCommand(commandConf Command) string {
 	}
 }
 
-func commandFromSequence(ivalue interface{}) string {
+func commandFromSequence(ivalue interface{}) []string {
 	strSlice := []string{}
 	v := reflect.ValueOf(ivalue)
 	for i := 0; i < v.Len(); i++ {
-		strSlice = append(strSlice, fmt.Sprint(v.Index(i)))
+		switch ivalue := v.Index(i).Interface().(type) {
+		case []interface{}:
+			for _, element := range ivalue {
+				strSlice = append(strSlice, element.(string))
+			}
+		case string:
+			strSlice = append(strSlice, fmt.Sprint(v.Index(i)))
+		}
 	}
-	return strings.Join(strSlice, " ")
+	return strSlice
 }
 
-func commandFromString(ivalue interface{}) string {
-	return fmt.Sprint(ivalue)
+func commandFromString(ivalue interface{}) []string {
+	return []string{fmt.Sprint(ivalue)}
 }
