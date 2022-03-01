@@ -122,7 +122,7 @@ profiles:
 With the configuration above, here are some usages of fzg.
 To find other usages, check `./scripts/tests`.
 
-```sh
+```bash
 # print the command assigned to 'find_files'
 $ fzg -c find_files
 export FZF_DEFAULT_COMMAND="find . -mindepth 1 -not \\( -path './.git/*' -or -path..."
@@ -157,7 +157,7 @@ $ zv(){
 }
 ```
 
-```sh
+```bash
 $ fzg -h
 USAGE: fzg [-q] [-r] [-c CMD -o OPTS | -c CMD | -o OPTS | -p PROFILE]
 
